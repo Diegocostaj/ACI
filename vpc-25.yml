@@ -1,0 +1,50 @@
+---
+- name: Associação de VPCs a EPGs
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    vpcs:
+      - VPC_LEAF79_LEAF80_ETH2-3
+      - VPC_LEAF79_LEAF80_ETH4-5
+      - VPC_LEAF79_LEAF80_ETH6-7
+      - VPC_LEAF79_LEAF80_ETH8-9
+      - VPC_LEAF79_LEAF80_ETH10-11
+      - VPC_LEAF79_LEAF80_ETH12-13
+      - VPC_LEAF79_LEAF80_ETH15-16
+      - VPC_LEAF79_LEAF80_ETH17-18
+      - VPC_LEAF79_LEAF80_ETH19-20
+      - VPC_LEAF79_LEAF80_ETH21-22
+      - VPC_LEAF79_LEAF80_ETH23-24
+      - VPC_LEAF79_LEAF80_ETH25-26
+      - VPC_LEAF79_LEAF80_ETH28-29
+      - VPC_LEAF79_LEAF80_ETH30-31
+      - VPC_LEAF79_LEAF80_ETH32-33
+      - VPC_LEAF79_LEAF80_ETH34-35
+      - VPC_LEAF79_LEAF80_ETH36-37
+      - VPC_LEAF79_LEAF80_ETH38-39
+      - VPC_LEAF79_LEAF80_ETH1
+      - VPC_LEAF79_LEAF80_ETH14
+      - VPC_LEAF79_LEAF80_ETH27
+
+  tasks:
+    - name: Add a new VPC
+      cisco.aci.aci_rest:
+        host: 192.168.0.10
+        username: diego
+        password: #123qwe#
+        use_ssl: true
+        validate_certs: false
+        path: /api/mo/uni.json
+        method: post
+        content:
+          fvRsPathAtt:
+            attributes:
+              dn: "uni/tn-CPP-Tenant/ap-APP_MEDIA_SERVICES/epg-EPG_AILOG_INTMC/rspathAtt-[topology/pod-1/protpaths-279-280/pathep-[{{ item }}]]"
+              encap: vlan-250
+              tDn: "topology/pod-1/protpaths-279-280/pathep-[{{ item }}]"
+              rn: "rspathAtt-[topology/pod-1/protpaths-279-280/pathep-[{{ item }}]]"
+              status: created,modified
+            children: []
+      loop: "{{ vpcs }}"
+      delegate_to: localhost
